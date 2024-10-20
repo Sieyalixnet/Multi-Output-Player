@@ -1,0 +1,65 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@layer components {
+    .btn-blue {
+      @apply py-2 px-4 m-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ;
+    }
+    .s-btn-blue {
+      @apply m-1 p-1 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 ;
+    }
+    .btn-red {
+      @apply py-2 px-4 m-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 ;
+    }
+    .attr-btn-red{
+      @apply py-2 px-4 mx-2 w-24 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 ;
+    }
+    .attr-btn-green{
+      @apply py-0.5 px-4 mx-2 w-24 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 ;
+    }
+    .s-btn-red {
+      @apply m-1 p-1 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 ;
+    }
+    .btn-green {
+      @apply py-2 px-4 m-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 ;
+    }
+    .table-input{
+      @apply m-1 w-28 border border-y-0 border-x-2 border-blue-100  rounded-sm transition-all outline-none focus:ring-2 focus:ring-blue-600 hover:ring-2 hover:ring-blue-200  
+    }
+    .blue-input{
+      @apply border border-transparent rounded-sm transition-all outline-none focus:ring-2 focus:ring-blue-600 hover:ring-2 hover:ring-blue-200  
+    }
+    .blue-label{
+      @apply select-none text-blue-300
+    }
+    .blue-border{
+      @apply transition-all my-2 p-1 border-2 border-blue-600 border-opacity-10 rounded-lg
+      hover:border-indigo-400 hover:border-opacity-50
+    }
+    .footer-label{
+      @apply mx-4 select-none transition-all text-blue-400 text-lg inline-block px-2 hover:ring-2 hover:ring-blue-400  ;
+    }
+    .flex-row-start{
+      @apply flex flex-row justify-start items-center
+    }
+    .flex-row-end{
+      @apply flex flex-row justify-end items-center
+    }
+    .flex-colum-start{
+      @apply flex flex-col justify-start items-center
+    }
+    .click-label{
+      @apply text-center cursor-pointer select-none hover:text-blue-300
+    }
+    .collapse-title{
+      @apply w-full text-xl relative md:text-sm text-left
+    }
+    /* @variants responsive, hover {
+        .btn-blue {
+          @apply py-2 px-4 bg-blue-500;
+        }
+      } */
+  }

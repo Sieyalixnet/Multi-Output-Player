@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Multi Sources Output Player",
+  "version": "0.1.0",
+  "identifier": "net.sieyalix.www",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:14420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../Build_Tauri"
+  },
+  
+  "app": {
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "dragDropEnabled": true,
+        "title": "Multi Sources Output Player",
+        "width": 1280,
+        "height": 800
+      }
+    ],
+    "security": {
+      "csp": null
+    },"withGlobalTauri": true
+    
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+        "icons/M.png",
+        "icons/M.ico"
+    ]
+  }
+}
