@@ -2,6 +2,7 @@ import { reactive, watch } from "vue";
 
 export type DetectedFile = {
     path: string,
+    name:string,
     duration: number,
     _duration:number,
     sample_rate: number,
@@ -12,11 +13,9 @@ export const Detected_Files = reactive<{ data: DetectedFile[] }>({
     data: [],
 })
 
-watch(Detected_Files, (newvalue, oldvalue) => {
-    console.log("from watch", newvalue, oldvalue)
-})
-
-
+// watch(Detected_Files, (newvalue, oldvalue) => {
+//     console.log("from watch", newvalue, oldvalue)
+// })
 
 export class Device {
     name: string

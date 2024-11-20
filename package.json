@@ -1,7 +1,7 @@
 {
   "name": "multi-sources-output",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,8 @@
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-shell": "^2",
     "@vueuse/core": "^10.1.2",
     "github-markdown-css": "^5.5.0",
@@ -24,7 +26,7 @@
   },
   "devDependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-     "@tauri-apps/cli": "^2",
+    "@tauri-apps/cli": "^2",
     "@vitejs/plugin-vue": "^4.1.0",
     "autoprefixer": "^10.4.14",
     "element-plus": "^2.5.2",

@@ -5,6 +5,7 @@ use rodio::{cpal, source::Source, Decoder, OutputStream, Sink};
 use rodio::{Device, DeviceTrait, OutputStreamHandle};
 use std::borrow::BorrowMut;
 use std::fs::File;
+use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
@@ -92,6 +93,7 @@ fn refresh_devices() -> String {
 
 #[derive(serde::Serialize, Clone, Debug)]
 struct FilePayload {
+    name: String,
     path: String,
     duration: u128,
     sample_rate: u32,
@@ -112,31 +114,37 @@ fn detect_file(path: &str) -> String {
         return "unknown".to_string();
     }
     println!("file path {}", path);
-    let file = BufReader::new(File::open(path).unwrap());
-    let source = Decoder::new(file).unwrap();
-    println!(
-        "duration {:?}",
-        source.total_duration().unwrap().as_millis()
-    );
-    println!("sample rate {:?}", source.sample_rate());
-
-    let file_payload = FilePayload {
-        path: path.to_string(),
-        duration: source.total_duration().unwrap().as_millis(),
-        sample_rate: source.sample_rate(),
-        format: file_format.to_string(),
-    };
-    let res = serde_json::to_string_pretty(&file_payload);
-    match res {
-        Ok(s) => s,
-        Err(e) => e.to_string(),
+    if let Ok(item) = File::open(path) {
+        let file = BufReader::new(item);
+        let source = Decoder::new(file).unwrap();
+        println!(
+            "duration {:?}",
+            source.total_duration().unwrap().as_millis()
+        );
+        println!("sample rate {:?}", source.sample_rate());
+        let p = Path::new(path);
+        let filename = p.file_name().unwrap().to_str().unwrap().to_string();
+        let file_payload = FilePayload {
+            name: filename,
+            path: path.to_string(),
+            duration: source.total_duration().unwrap().as_millis(),
+            sample_rate: source.sample_rate(),
+            format: file_format.to_string(),
+        };
+        let res = serde_json::to_string_pretty(&file_payload);
+        match res {
+            Ok(s) => s,
+            Err(e) => e.to_string(),
+        }
+    } else {
+        return "unknown".to_string();
     }
 }
 
-#[derive(serde::Serialize,serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct OutputDevicePlayload {
-    name:String,
-    volumn:f32,
+    name: String,
+    volumn: f32,
 }
 
 #[tauri::command]
@@ -153,14 +161,14 @@ async fn play(
         //     continue;
         // }
         let mut skip = true;
-        let mut volumn:f32 = 1.0;
+        let mut volumn: f32 = 1.0;
         for item in outputDevices.iter() {
             if item.name == name {
                 volumn = item.volumn;
                 skip = false;
             }
         }
-        if skip ==true{
+        if skip == true {
             continue;
         }
         let (_outputstream, stream_handle) = OutputStream::try_from_device(&dev).unwrap();
@@ -255,10 +263,10 @@ async fn resume(state: tauri::State<'_, RustState>) -> Result<(), ()> {
     Ok(())
 }
 
-#[derive(serde::Serialize,serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct GetPositionPayload {
-    duration:u128,
-    is_paused:bool,
+    duration: u128,
+    is_paused: bool,
 }
 
 #[tauri::command]
@@ -272,9 +280,9 @@ fn get_pos(state: tauri::State<'_, RustState>) -> String {
     let s = sink.lock().unwrap();
     let dur = s.get_pos();
     let is_paused = s.is_paused();
-    let res = serde_json::to_string_pretty(&GetPositionPayload{
-        duration:dur.as_millis(),
-        is_paused:is_paused
+    let res = serde_json::to_string_pretty(&GetPositionPayload {
+        duration: dur.as_millis(),
+        is_paused: is_paused,
     });
     match res {
         Ok(s) => s,
@@ -283,7 +291,7 @@ fn get_pos(state: tauri::State<'_, RustState>) -> String {
 }
 
 #[tauri::command]
-async fn goto(ms:u64,state: tauri::State<'_, RustState>) -> Result<(), ()> {
+async fn goto(ms: u64, state: tauri::State<'_, RustState>) -> Result<(), ()> {
     let arc_state = state.0.clone();
     let mut state = arc_state.lock().unwrap();
     println!("goto {}", ms);
@@ -304,13 +312,13 @@ async fn open(path: String) -> Result<(), ()> {
     Ok(())
 }
 
-
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let shared_data = Arc::new(Mutex::new(State::new()));
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_fs::init())
         .manage(RustState(shared_data))
         .invoke_handler(tauri::generate_handler![
             open,

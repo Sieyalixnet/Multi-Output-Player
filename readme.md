@@ -20,7 +20,7 @@ Play the music by different devices, so that you can compare the devices!
 
 ## TODO
 
-1. save/load playlist.
+1. ~~save/load playlist.~~
 
 2. show more meta data.
 

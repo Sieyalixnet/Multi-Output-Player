@@ -1,5 +1,6 @@
 <template>
     <div style="width: 100vw;height: 100vh;">
+        <Menu @savePlaylist="savePlaylist" @uploadPlaylist="uploadPlaylist" @checkPlaylist="checkPlaylist"></Menu>
         <div class=" flex flex-row justify-between items-start w-[100%] h-[85%] border-b  border-slate-200">
 
 
@@ -7,7 +8,7 @@
 
                 <el-table :data="Detected_Files.data" v-if="Detected_Files.data.length > 0"
                     :row-class-name="tableRowClassName">
-                    <el-table-column fixed prop="path" label="Path" width="300" />
+                    <el-table-column fixed prop="name" label="Path" width="360" show-overflow-tooltip/>
                     <el-table-column prop="_duration" label="Duration" width="120" />
                     <el-table-column prop="sample_rate" label="Sample Rate" width="120" />
                     <el-table-column prop="format" label="Format" width="120" />
@@ -76,15 +77,50 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { Detected_Files, Devices, Device, playing_status } from "./script/rc";
+import { Detected_Files, Devices, Device, playing_status, DetectedFile } from "./script/rc";
 import { invoke } from "@tauri-apps/api/core";
 import { Square, Pause, PlayOne, Delete } from '@icon-park/vue-next'
 import { ElMessage } from 'element-plus'
 import { format_duration } from "./script/utils"
+import { downloadText } from "./script/save";
+import Menu from "./components/Menu.vue";
+
 onMounted(() => {
     refresh()
     refresh_playing()
 })
+const savePlaylist = ()=>{
+    if(Detected_Files.data.length === 0){
+        ElMessage({
+            message: "Playlist is empty. 播放列表为空",
+            type: "error"
+        })
+        return
+    }
+   downloadText(JSON.stringify(Detected_Files.data), "playlist", "mspl")
+}
+const uploadPlaylist=(text:string)=>{
+    const data = JSON.parse(text)
+    Detected_Files.data.splice(0)
+    for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        Detected_Files.data.push(item)
+    }
+}
+const checkPlaylist=async ()=>{
+    const result:DetectedFile[] = []
+    for (let i = 0; i < Detected_Files.data.length; i++) {
+        const path = Detected_Files.data[i].path
+        const res = await invoke("detect_file", { path: path }) as string
+        if (res === "unknown") continue
+        const r = JSON.parse(res);
+        r._duration = format_duration( r.duration);
+        result.push(r)
+    }
+    Detected_Files.data.splice(0)
+    Detected_Files.data.push(...result)
+}
+
 const _refresh_playing = async () => {
     const res = await invoke("get_pos") as any;
     if (res === "NONE") {

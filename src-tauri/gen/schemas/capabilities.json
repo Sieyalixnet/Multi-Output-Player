@@ -1,1 +1,1 @@
-{"default":{"identifier":"default","description":"Capability for the main window","local":true,"windows":["main"],"permissions":["core:default","shell:allow-open","core:event:allow-listen","core:event:default"]}}
+{"default":{"identifier":"default","description":"Capability for the main window","local":true,"windows":["main"],"permissions":["core:default","shell:allow-open","core:event:allow-listen","core:event:default","fs:write-files","fs:read-files","fs:allow-download-read-recursive","fs:allow-download-write-recursive","process:default"]}}
